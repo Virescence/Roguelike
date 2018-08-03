@@ -1,0 +1,38 @@
+<html>
+<head>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
+
+
+</head>
+<body>
+  <h1>Check if "enter" is pressed with jQuery</h1>
+
+<label>TextBox : </label>
+<input id="textbox" type="text" size="50" />
+
+<script type="text/javascript">
+
+$('#textbox').keypress(function(event){
+
+	var keycode = (event.keyCode ? event.keyCode : event.which);
+	if(keycode == '13'){
+		alert('You pressed a "enter" key in textbox');
+	}
+	event.stopPropagation();
+});
+
+$(document).keypress(function(event){
+
+	var keycode = (event.keyCode ? event.keyCode : event.which);
+	if(keycode == '13'){
+		alert('You pressed a "enter" key in somewhere');
+	}
+
+});
+
+</script>
+</body>
+</html>

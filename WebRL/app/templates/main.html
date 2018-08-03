@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
+    <script src="/static/main.js"></script>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/main.css') }}">
+
+
+    <script type="text/javascript" src="{{ url_for('static', filename='test.js') }}"></script>
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var messages_received = [];
+
+        socket.on('connect', function() {
+            socket.emit('my event', {data: 'I\'m connected!'});
+        });
+
+        socket.on('servermsg', function(msg) {
+        console.log("Received message: " + msg.message);
+        //maintain a list of ten messages
+        if (messages_received.length >= 10){
+            messages_received.shift()
+        }
+        messages_received.push(msg.message);
+        message_string = '';
+        for (var i = 0; i < messages_received.length; i++){
+            message_string = message_string + '<p>' + messages_received[i].toString() + '</p>';
+        }
+        $('#log').html(message_string);
+    });
+    </script>
+
+
+</head>
+
+<div class="jumbotron">
+    <h1>CHRISTIAN CHAT SERVER</h1>
+</div>
+
+<div class="container" id="content">
+    <div class="row">
+        <p></p>
+        <h3>Message list:</h3>
+        <div id="log">
+        </div>
+</div>
+
+
+</div>
+<div>
+
+    <form id="login" style="display:block">
+        Username: <input type="text" name="username" autocomplete="on"><br>
+        <input type="button" onclick="login()">
+    </form>
+
+   <form id="frm1" style="display:none">
+      Message: <input type="text" name="message" autocomplete="off"><br>
+
+      <input type="button" onclick="sendMessage()">
+   </form>
+
+    <script>
+
+    function login(){
+    var username = document.getElementById("login").username.value;
+    socket.emit('login', {data: username});
+    document.getElementById("frm1").style.display = 'block';
+    document.getElementById("login").style.display = 'none';
+    }
+
+    function sendMessage() {
+        var message = document.getElementById("frm1").message.value;
+        socket.emit('browsermsg', {data: message});
+        document.getElementById("frm1").message.value = '';
+    }
+    $("#frm1").submit(function (e) {
+        e.preventDefault();
+        sendMessage();
+     });
+
+    $("#login").submit(function (e){
+        e.preventDefault();
+        login();
+    });
+
+    //var code = e.keyCode || e.which;
+
+    </script>
+
+</div>
+
+<canvas id="canvas"></canvas>
+<script>
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+</script>
+
+
+</body>
+</html>
